@@ -1,0 +1,63 @@
+
+<html lang="en-US">
+<head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123126773-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-123126773-1');
+    </script>
+
+	<meta content="text/html; charset=UTF-8" />
+	<title>Stardew Valley multiplayer host swapper</title>
+    <style>
+        textarea {
+            width: 80%;
+            height: 100px ;
+        }
+        input {
+            margin: 5px;
+        }
+        .characters {
+            margin-bottom: 10px;
+        }
+    </style>
+    <script type="text/javascript" src="js/swap.js">
+    </script>
+
+</head>
+
+<body>
+    <div>
+        <h1>Swap Stardew Valley host</h1>
+        <p>Want to swap who's a farmhand and who's the host? This handy tool performs the changes described in this guide for you: <a href="https://www.reddit.com/r/StardewValley/comments/8i5z1j/guide_how_to_change_hosts_of_a_multiplayer_save/">www.reddit.com/r/StardewValley/comments/8i5z1j/guide_how_to_change_hosts_of_a_multiplayer_save</a>
+        <p><b>Always keep back-ups!</b> Modifying save files can break your game or be incompatible with updates. Use at your own risk.</p>
+    </div>
+
+    <div>
+        <br/>
+        <br/>
+        <div>
+            <h2>Paste the contents of the file <span style="font-family:monospace">HostCharacterName_123456789</span> here.</h2>
+            <p>See <a href="https://stardewvalleywiki.com/Saves">https://stardewvalleywiki.com/Saves</a> for where to find your save file. Once it's parsed, option buttons will appear. (It can take awhile.)</p>
+        </div>
+        <p><textarea id="input" oninput="setCharacters(event)"></textarea></p>
+        <div id="instructions">
+            <p>Results will appear here.</p>
+        </div>
+        <p><textarea id="output"></textarea></p>
+        <br />
+        <p>Known issues:
+            <ul>
+                <li>Host shown on load screen stays original host when first loading</li>
+                <li>New host repeats host-only events, like picking mushrooms or bats</li>
+                <li>Messes up which house is upgraded</li>
+            </ul>
+        </p>
+	</div>
+
+</body>
+</html>
