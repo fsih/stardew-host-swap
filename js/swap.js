@@ -74,6 +74,96 @@ function setCharacters(e) {
     }
 }
 
+function isolateTag(string, tag) {
+    var startIndex = string.indexOf("<" + tag + ">");
+    var endIndex = string.indexOf("</" + tag + ">") + tag.length + 3;
+    var noContents = false;
+    if (startIndex === -1) {
+        startIndex = string.indexOf("<" + tag + "/>" + tag.length + 3);
+        noContents = true;
+        endIndex = startIndex;
+    }
+    if (startIndex === -1) {
+        return string; // malformed
+    }
+    var beforeTag = string.substring(0, startIndex) + "<" + tag + ">";
+    var contents = noContents ? "" : string.substring(startIndex + tag.length + 2, endIndex - tag.length - 3);
+    var afterTag = "</" + tag + ">" + string.substring(endIndex);
+    return [beforeTag, contents, afterTag];
+}
+
+function fixMail(newHostString, originalHostString) {
+    newHostString = isolateTag(newHostString, "mailReceived");
+    originalHostString = isolateTag(originalHostString, "mailReceived");
+
+    var newHostMail = newHostString[1];
+    var oldHostMail = originalHostString[1];
+    var mailString = newHostMail;
+    // Mail that all players should share
+    var transferrableMail = [
+        "<string>ccDoorUnlock</string>",
+        "<string>ccPantry</string>",
+        "<string>ccCraftsRoom</string>",
+        "<string>ccFishTank</string>",
+        "<string>ccBoilerRoom</string>",
+        "<string>ccBulletin</string>",
+        "<string>ccVault</string>",
+        "<string>jojaPantry</string>",
+        "<string>jojaCraftsRoom</string>",
+        "<string>jojaFishTank</string>",
+        "<string>jojaBoilerRoom</string>",
+        "<string>jojaVault</string>",
+        "<string>JojaMember</string>"
+    ];
+    for (var i = 0; i < transferrableMail.length; i++) {
+        if (oldHostMail.includes(transferrableMail[i]) && !newHostMail.includes(transferrableMail[i])) {
+            mailString += transferrableMail[i];
+        }
+    }
+    
+    return newHostString[0] + mailString + newHostString[2];
+}
+
+function fixHomeLocation(dest, source) {
+    var cutDestString = isolateTag(dest, "homeLocation");
+    var cutSourceString = isolateTag(source, "homeLocation");
+    return cutDestString[0] + cutSourceString[1] + cutDestString[2];
+}
+
+function fixUpgradeLevels(dest, source) {
+    var cutDestString = isolateTag(dest, "houseUpgradeLevel");
+    var cutSourceString = isolateTag(source, "houseUpgradeLevel");
+    dest = cutDestString[0] + cutSourceString[1] + cutDestString[2];
+    cutDestString = isolateTag(dest, "daysUntilHouseUpgrade")
+    cutSourceString = isolateTag(source, "daysUntilHouseUpgrade");
+    return cutDestString[0] + cutSourceString[1] + cutDestString[2];
+}
+
+function fixEvents(newHostString, originalHostString) {
+    newHostString = isolateTag(newHostString, "eventsSeen");
+    originalHostString = isolateTag(originalHostString, "eventsSeen");
+
+    var newHostEvents = newHostString[1];
+    var oldHostEvents = originalHostString[1];
+    var eventsString = newHostEvents;
+    // Events that all players should share
+    var transferrableEvents = [
+        "<int>65</int>", // Bats or mushrooms
+        "<int>1590166</int>", // Marnie gives you a cat
+        "<int>897405</int>", // Marnie gives you a dog
+        "<int>611439</int>", // Community center unlocked
+        "<int>191393</int>", // Community center final cutscene
+        "<int>502261</int>" // Joja final cutscene
+    ];
+    for (var i = 0; i < transferrableEvents.length; i++) {
+        if (oldHostEvents.includes(transferrableEvents[i]) && !newHostEvents.includes(transferrableEvents[i])) {
+            eventsString += transferrableEvents[i];
+        }
+    }
+    
+    return newHostString[0] + eventsString + newHostString[2];
+}
+
 function submit(index) {
     var div = document.getElementById("instructions");
     var instruction2 = document.getElementById("instruction2");
@@ -90,6 +180,7 @@ function submit(index) {
         out.value = originalString;
     } else {
         var outString = "";
+        // Swap player name/data with index name/data
         for (var i = 0; i < chunks.length; i++) {
             var j = i;
             if (i === index) {
@@ -101,7 +192,17 @@ function submit(index) {
             } else if (i === 2) {
                 j = index + 1;
             }
-            outString += chunks[j];
+            var nextChunk = chunks[j];
+            if (i === 2) {
+                nextChunk = fixEvents(nextChunk, chunks[2]);
+                nextChunk = fixMail(nextChunk, chunks[2]);
+                nextChunk = fixUpgradeLevels(nextChunk, chunks[2]);
+                nextChunk = fixHomeLocation(nextChunk, "<homeLocation>FarmHouse</homeLocation>");
+            } else if (j === 2) {
+                nextChunk = fixUpgradeLevels(nextChunk, chunks[index + 1]);
+                nextChunk = fixHomeLocation(nextChunk, chunks[index + 1]);
+            }
+            outString += nextChunk;
         }
         out.value = outString;
     }
