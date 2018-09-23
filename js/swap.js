@@ -55,7 +55,7 @@ function setCharacters(e) {
         var t = document.createTextNode("Error: The save file couldn't be read. Check that the whole thing is pasted, and it starts with '<?xml...'");
         div.appendChild(t);
     } else {
-        var t = document.createTextNode("Pick new host (it can take awhile): ");
+        var t = document.createTextNode("Pick new host (it can take a minute): ");
         div.appendChild(t);
         for (var i = 0; i < players.length; i++) {
             var input = document.createElement("input");
@@ -174,6 +174,7 @@ function submit(index) {
     p.appendChild(t);
     div.appendChild(p);
 
+    document.getElementById("input").value = "";
     var out = document.getElementById("output");
     out.value = "";
     if (index === 1) {
@@ -205,5 +206,6 @@ function submit(index) {
             outString += nextChunk;
         }
         out.value = outString;
+        out.select();
     }
 }
