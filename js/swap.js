@@ -209,3 +209,10 @@ function submit(index) {
         out.select();
     }
 }
+
+function copy() {
+    var out = document.getElementById("output");
+    out.select();
+    document.execCommand("copy");
+}
+
