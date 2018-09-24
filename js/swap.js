@@ -113,7 +113,8 @@ function fixMail(newHostString, originalHostString) {
         "<string>jojaFishTank</string>",
         "<string>jojaBoilerRoom</string>",
         "<string>jojaVault</string>",
-        "<string>JojaMember</string>"
+        "<string>JojaMember</string>",
+        "<string>spring_2_1</string>" // Willy's shop unlock
     ];
     for (var i = 0; i < transferrableMail.length; i++) {
         if (oldHostMail.includes(transferrableMail[i]) && !newHostMail.includes(transferrableMail[i])) {
